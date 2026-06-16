@@ -7,18 +7,8 @@ import {
   User,
   Auth
 } from 'firebase/auth';
-import { 
-  getFirestore, 
-  doc, 
-  collection, 
-  setDoc, 
-  deleteDoc, 
-  onSnapshot,
-  query
-} from 'firebase/firestore';
 
 // Firebase Web App Configuration
-// TODO: Ganti dengan konfigurasi dari Firebase Console Anda
 const firebaseConfig = {
   apiKey: "AIzaSyBwgoRQb4zgTx6kQT1a90T1vfFgGmxEKXY",
   authDomain: "computing-fc46e.firebaseapp.com",
@@ -32,12 +22,11 @@ const firebaseConfig = {
 // Initialize Firebase (Avoid multiple initializations in dev reload)
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 const auth: Auth = getAuth(app);
-const db = getFirestore(app);
 
-export { auth, db };
+export { auth };
 
 /**
- * Firebase Services for Practical Exam
+ * Firebase Auth Services
  */
 export const FirebaseService = {
   /**
@@ -73,54 +62,6 @@ export const FirebaseService = {
     } catch (error: any) {
       throw new Error(error.message || 'Gagal untuk keluar.');
     }
-  },
-
-  /**
-   * Save a Recipe to User's Firestore Cookbook
-   */
-  async saveToCookbook(userId: string, recipe: { idMeal: string; strMeal: string; strMealThumb: string; strCategory: string }) {
-    try {
-      const docRef = doc(db, 'users', userId, 'cookbook', recipe.idMeal);
-      await setDoc(docRef, {
-        idMeal: recipe.idMeal,
-        strMeal: recipe.strMeal,
-        strMealThumb: recipe.strMealThumb,
-        strCategory: recipe.strCategory,
-        savedAt: new Date().toISOString(),
-      });
-    } catch (error: any) {
-      throw new Error('Gagal menyimpan resep ke database: ' + error.message);
-    }
-  },
-
-  /**
-   * Remove a Recipe from User's Firestore Cookbook
-   */
-  async removeFromCookbook(userId: string, recipeId: string) {
-    try {
-      const docRef = doc(db, 'users', userId, 'cookbook', recipeId);
-      await deleteDoc(docRef);
-    } catch (error: any) {
-      throw new Error('Gagal menghapus resep dari database: ' + error.message);
-    }
-  },
-
-  /**
-   * Subscribe to real-time updates of User's Cookbook from Firestore
-   */
-  subscribeToCookbook(userId: string, callback: (recipes: any[]) => void) {
-    const colRef = collection(db, 'users', userId, 'cookbook');
-    const q = query(colRef);
-    
-    return onSnapshot(q, (snapshot) => {
-      const recipes: any[] = [];
-      snapshot.forEach((doc) => {
-        recipes.push(doc.data());
-      });
-      callback(recipes);
-    }, (error) => {
-      console.error('Error listening to cookbook collection: ', error);
-    });
   },
 
   /**
