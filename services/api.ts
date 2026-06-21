@@ -100,7 +100,8 @@ export const ApiService = {
    */
   async searchMeals(query: string): Promise<MealSummary[]> {
     try {
-      const response = await apiClient.get<{ meals: MealSummary[] }>(`search.php?s=${encodeURIComponent(query)}`);
+      const response = await apiClient.get<{ meals: MealSummary[] | null }>(`search.php?s=${encodeURIComponent(query)}`);
+      // API return null if no meals found, handle it safely
       return response.data.meals || [];
     } catch (error) {
       throw new Error(handleApiError(error));
