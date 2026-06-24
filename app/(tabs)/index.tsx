@@ -13,8 +13,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { ApiService, MealCategory, MealSummary } from '@/services/api';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useThemeContext } from '@/hooks/theme-context';
 
 export default function HomeScreen() {
+  const { isDark, toggleTheme } = useThemeContext();
   const [categories, setCategories] = useState<MealCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [meals, setMeals] = useState<MealSummary[]>([]);
@@ -88,32 +91,146 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView
+  style={[
+    styles.container,
+    {
+      backgroundColor: isDark
+        ? '#121212'
+        : '#F5F5F5',
+    },
+  ]}
+>
+      <StatusBar
+  barStyle={
+    isDark
+      ? 'light-content'
+      : 'dark-content'
+  }
+/>
       
       {/* App Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.welcomeText}>Halo, Koki!</Text>
-          <Text style={styles.titleText}>FlavorForge</Text>
-        </View>
-      </View>
+<View style={styles.header}>
+  <View>
+    <Text
+      style={[
+        styles.welcomeText,
+        {
+          color: isDark
+            ? '#aaa'
+            : '#666',
+        },
+      ]}
+    >
+      Halo, Koki!
+    </Text>
 
-      {/* Search Input Section (Axios Integrator Feature) */}
-      <View style={styles.searchSection}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Cari resep makanan..."
-          placeholderTextColor="#999"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onSubmitEditing={handleSearch}
-          returnKeyType="search"
-        />
-        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-          <Text style={styles.searchButtonText}>Cari</Text>
-        </TouchableOpacity>
-      </View>
+    <Text
+      style={[
+        styles.titleText,
+        {
+          color: isDark
+            ? '#fff'
+            : '#121212',
+        },
+      ]}
+    >
+      FlavorForge
+    </Text>
+  </View>
+
+  <TouchableOpacity
+    onPress={toggleTheme}
+    style={{
+      width: 82,
+      height: 42,
+      borderRadius: 21,
+      backgroundColor: isDark
+        ? '#1E1E1E'
+        : '#E5E5E5',
+      justifyContent: 'center',
+      paddingHorizontal: 4,
+    }}
+  >
+    <View
+      style={{
+        position: 'absolute',
+        left: isDark ? 42 : 4,
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        backgroundColor: '#fff',
+      }}
+    />
+
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingHorizontal: 10,
+      }}
+    >
+      <Ionicons
+        name="sunny"
+        size={16}
+        color={
+          isDark
+            ? '#666'
+            : '#FFB800'
+        }
+      />
+
+      <Ionicons
+        name="moon"
+        size={16}
+        color={
+          isDark
+            ? '#FFFFFF'
+            : '#666'
+        }
+      />
+    </View>
+  </TouchableOpacity>
+</View>
+<View style={styles.searchSection}>
+              <TextInput
+                style={[
+                  styles.searchInput,
+                  {
+                    backgroundColor: isDark
+                      ? '#1E1E1E'
+                      : '#FFFFFF',
+
+                    color: isDark
+                      ? '#FFFFFF'
+                      : '#121212',
+
+                    borderColor: isDark
+                      ? '#2D2D2D'
+                      : '#E5E5E5',
+                  },
+                ]}
+                placeholder="Cari resep makanan..."
+                placeholderTextColor={
+                  isDark
+                    ? '#999'
+                    : '#666'
+                }
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                onSubmitEditing={handleSearch}
+                returnKeyType="search"
+              />
+
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={handleSearch}
+              >
+                <Text style={styles.searchButtonText}>
+                  Cari
+                </Text>
+              </TouchableOpacity>
+              </View>
 
       {/* Error State View with Retry (Axios Error Handling Demonstration) */}
       {error ? (
@@ -144,19 +261,33 @@ export default function HomeScreen() {
                 renderItem={({ item }) => {
                   const isSelected = item.strCategory === selectedCategory;
                   return (
-                    <TouchableOpacity
-                      style={[
-                        styles.categoryItem,
-                        isSelected && styles.categoryItemActive,
-                      ]}
-                      onPress={() => handleCategorySelect(item.strCategory)}
-                    >
-                      <Text
+                   <TouchableOpacity
                         style={[
-                          styles.categoryText,
-                          isSelected && styles.categoryTextActive,
+                          styles.categoryItem,
+                          {
+                            backgroundColor: isDark
+                              ? '#1E1E1E'
+                              : '#FFFFFF',
+
+                            borderColor: isDark
+                              ? '#2D2D2D'
+                              : '#E5E5E5',
+                          },
+                          isSelected && styles.categoryItemActive,
                         ]}
+                        onPress={() => handleCategorySelect(item.strCategory)}
                       >
+                        <Text
+                          style={[
+                            styles.categoryText,
+                            {
+                              color: isDark
+                                ? '#AAA'
+                                : '#666',
+                            },
+                            isSelected && styles.categoryTextActive,
+                          ]}
+                        >
                         {item.strCategory}
                       </Text>
                     </TouchableOpacity>
@@ -180,13 +311,34 @@ export default function HomeScreen() {
               numColumns={2}
               columnWrapperStyle={styles.mealRow}
               renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.mealCard}
-                  onPress={() => router.push(`/recipe/${item.idMeal}`)}
-                >
+              <TouchableOpacity
+                style={[
+                  styles.mealCard,
+                  {
+                    backgroundColor: isDark
+                      ? '#1E1E1E'
+                      : '#FFFFFF',
+
+                    borderColor: isDark
+                      ? '#2D2D2D'
+                      : '#E5E5E5',
+                  },
+                ]}
+                onPress={() => router.push(`/recipe/${item.idMeal}`)}
+              >
                   <Image source={{ uri: item.strMealThumb }} style={styles.mealImage} />
                   <View style={styles.mealDetails}>
-                    <Text style={styles.mealTitle} numberOfLines={2}>
+                    <Text
+                      style={[
+                        styles.mealTitle,
+                        {
+                          color: isDark
+                            ? '#FFFFFF'
+                            : '#121212',
+                        },
+                      ]}
+                      numberOfLines={2}
+                    >
                       {item.strMeal}
                     </Text>
                     <Text style={styles.mealCategoryBadge}>

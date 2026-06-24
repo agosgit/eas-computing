@@ -1,4 +1,4 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Stack, router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -8,20 +8,21 @@ import { auth } from '@/services/firebase';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { ThemeProvider } from '@/hooks/theme-context';
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-export default function RootLayout() {
+function AppContent() {
   const colorScheme = useColorScheme();
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
-  // Monitor auth state changes (Firebase Integrator Feature)
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+
       if (initializing) {
         setInitializing(false);
       }
@@ -30,15 +31,12 @@ export default function RootLayout() {
     return unsubscribe;
   }, []);
 
-  // Handle routing based on authentication state
   useEffect(() => {
     if (initializing) return;
 
     if (user) {
-      // User is logged in, navigate to tabs home dashboard
       router.replace('/(tabs)');
     } else {
-      // User is not logged in, navigate to login page
       router.replace('/(auth)/login');
     }
   }, [user, initializing]);
@@ -52,13 +50,35 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <NavigationThemeProvider
+      value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+    >
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="recipe/[id]" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="(auth)"
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="(tabs)"
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="recipe/[id]"
+          options={{ headerShown: false }}
+        />
       </Stack>
+
       <StatusBar style="light" />
+    </NavigationThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <AppContent />
     </ThemeProvider>
   );
 }

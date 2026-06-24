@@ -1,20 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Image,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { useThemeContext } from '@/hooks/theme-context';
 import { FirebaseService, auth } from '@/services/firebase';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function CookbookScreen() {
+    const { isDark } = useThemeContext();
   const [recipes, setRecipes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const user = auth.currentUser;
@@ -82,24 +84,67 @@ export default function CookbookScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={[
+          styles.container,
+          {
+            backgroundColor: isDark ? '#121212' : '#F5F5F5',
+          },
+        ]}
+      >
       {/* Profile & Logout Header */}
       <View style={styles.profileHeader}>
         <View style={styles.userInfo}>
           <MaterialIcons name="account-circle" size={40} color="#FF6B6B" />
           <View style={styles.userTextContainer}>
-            <Text style={styles.welcomeText}>Cookbook Pribadi</Text>
-            <Text style={styles.emailText} numberOfLines={1}>
+          <Text
+            style={[
+              styles.welcomeText,
+              {
+                color: isDark ? '#aaa' : '#666',
+              },
+            ]}
+          >
+            Cookbook Pribadi
+          </Text>
+            <Text
+              style={[
+                styles.emailText,
+                {
+                  color: isDark ? '#FFFFFF' : '#121212',
+                },
+              ]}
+              numberOfLines={1}
+            >
               {user?.email || 'Guest User'}
             </Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <TouchableOpacity
+            style={[
+              styles.logoutButton,
+              {
+                backgroundColor: isDark
+                  ? 'rgba(255,107,107,0.1)'
+                  : '#FFEAEA',
+              },
+            ]}
+            onPress={handleLogout}
+          >
           <MaterialIcons name="logout" size={22} color="#FF6B6B" />
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.sectionTitle}>Resep Favorit Anda</Text>
+            <Text
+            style={[
+              styles.sectionTitle,
+              {
+                color: isDark ? '#FFFFFF' : '#121212',
+              },
+            ]}
+          >
+            Resep Favorit Anda
+          </Text>
 
       {loading ? (
         <View style={styles.centerWrapper}>
@@ -122,17 +167,42 @@ export default function CookbookScreen() {
           data={recipes}
           keyExtractor={(item) => item.idMeal}
           renderItem={({ item }) => (
-            <View style={styles.recipeCard}>
+            <View
+              style={[
+                styles.recipeCard,
+                {
+                  backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                  borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                },
+              ]}
+            >
               <TouchableOpacity
                 style={styles.cardClickable}
                 onPress={() => router.push(`/recipe/${item.idMeal}`)}
               >
                 <Image source={{ uri: item.strMealThumb }} style={styles.recipeImage} />
                 <View style={styles.recipeDetails}>
-                  <Text style={styles.recipeTitle} numberOfLines={2}>
+                  <Text
+                    style={[
+                      styles.recipeTitle,
+                      {
+                        color: isDark ? '#FFFFFF' : '#121212',
+                      },
+                    ]}
+                    numberOfLines={2}
+                  >
                     {item.strMeal}
                   </Text>
-                  <Text style={styles.recipeCategory}>{item.strCategory}</Text>
+                    <Text
+                      style={[
+                        styles.recipeCategory,
+                        {
+                          color: isDark ? '#888' : '#666',
+                        },
+                      ]}
+                    >
+                      {item.strCategory}
+                    </Text>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity

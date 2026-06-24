@@ -7,7 +7,6 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  StatusBar,
   Linking,
   Alert,
 } from 'react-native';
@@ -16,16 +15,20 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { ApiService, MealDetail } from '@/services/api';
 import { FirebaseService, auth } from '@/services/firebase';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useThemeContext } from '@/hooks/theme-context';
 
 export default function RecipeDetailScreen() {
+  const { isDark } = useThemeContext();
+
   const { id } = useLocalSearchParams<{ id: string }>();
+
   const [recipe, setRecipe] = useState<MealDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Local checklist state for ingredients
   const [checkedIngredients, setCheckedIngredients] = useState<Record<string, boolean>>({});
-  
+
   // Saved in Firebase State
   const [isSaved, setIsSaved] = useState(false);
   const user = auth.currentUser;
@@ -123,64 +126,187 @@ export default function RecipeDetailScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+          <SafeAreaView
+            style={[
+              styles.container,
+              {
+                backgroundColor: isDark
+                  ? '#121212'
+                  : '#F5F5F5',
+              },
+            ]}
+          >
       
-      {/* Header Navigation */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.headerIconButton} onPress={() => router.back()}>
-          <MaterialIcons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {recipe.strMeal}
-        </Text>
-        <TouchableOpacity style={styles.headerIconButton} onPress={handleSaveToggle}>
-          <MaterialIcons 
-            name={isSaved ? "favorite" : "favorite-border"} 
-            size={24} 
-            color="#FF6B6B" 
-          />
-        </TouchableOpacity>
-      </View>
+          {/* Header Navigation */}
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={[
+                styles.headerIconButton,
+                {
+                  backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                  borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                },
+              ]}
+              onPress={() => router.back()}
+            >
+              <MaterialIcons
+                name="arrow-back"
+                size={24}
+                color={isDark ? '#FFFFFF' : '#121212'}
+              />
+            </TouchableOpacity>
+
+            <Text
+              style={[
+                styles.headerTitle,
+                {
+                  color: isDark ? '#FFFFFF' : '#121212',
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {recipe.strMeal}
+            </Text>
+
+            <TouchableOpacity
+                style={[
+                  styles.headerIconButton,
+                  {
+                    backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                    borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                  },
+                ]}
+                onPress={handleSaveToggle}
+              >
+                <MaterialIcons
+                  name={isSaved ? 'favorite' : 'favorite-border'}
+                  size={24}
+                  color="#FF6B6B"
+                />
+              </TouchableOpacity>
+            </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Recipe Image */}
         <Image source={{ uri: recipe.strMealThumb }} style={styles.recipeImage} />
 
         {/* Recipe Summary Bar */}
-        <View style={styles.summaryContainer}>
-          <View style={styles.summaryBadge}>
-            <MaterialIcons name="restaurant" size={16} color="#FF6B6B" />
-            <Text style={styles.summaryBadgeText}>{recipe.strCategory}</Text>
+          <View style={styles.summaryContainer}>
+            <View
+              style={[
+                styles.summaryBadge,
+                {
+                  backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                  borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                },
+              ]}
+            >
+              <MaterialIcons name="restaurant" size={16} color="#FF6B6B" />
+              <Text
+                style={[
+                  styles.summaryBadgeText,
+                  { color: isDark ? '#CCCCCC' : '#121212' },
+                ]}
+              >
+                {recipe.strCategory}
+              </Text>
+            </View>
+
+            <View
+              style={[
+                styles.summaryBadge,
+                {
+                  backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                  borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                },
+              ]}
+            >
+              <MaterialIcons name="public" size={16} color="#FF6B6B" />
+              <Text
+                style={[
+                  styles.summaryBadgeText,
+                  { color: isDark ? '#CCCCCC' : '#121212' },
+                ]}
+              >
+                {recipe.strArea}
+              </Text>
+            </View>
+
+            {recipe.strYoutube && (
+              <TouchableOpacity
+                style={[
+                  styles.summaryBadge,
+                  styles.youtubeBadge,
+                  {
+                    backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                    borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                  },
+                ]}
+                onPress={openYoutube}
+              >
+                <MaterialIcons
+                  name="play-circle-fill"
+                  size={16}
+                  color="#FF0000"
+                />
+                <Text
+                  style={[
+                    styles.youtubeText,
+                    { color: isDark ? '#FFFFFF' : '#121212' },
+                  ]}
+                >
+                  Video
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-          <View style={styles.summaryBadge}>
-            <MaterialIcons name="public" size={16} color="#FF6B6B" />
-            <Text style={styles.summaryBadgeText}>{recipe.strArea}</Text>
-          </View>
-          {recipe.strYoutube && (
-            <TouchableOpacity style={[styles.summaryBadge, styles.youtubeBadge]} onPress={openYoutube}>
-              <MaterialIcons name="play-circle-fill" size={16} color="#FF0000" />
-              <Text style={styles.youtubeText}>Video</Text>
-            </TouchableOpacity>
-          )}
-        </View>
 
         <View style={styles.infoSection}>
           {/* Ingredients Section (Local State Interactive Feature) */}
-          <Text style={styles.sectionTitle}>Bahan-Bahan</Text>
-          <Text style={styles.sectionSubtitle}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              {
+                color: isDark ? '#FFFFFF' : '#121212',
+              },
+            ]}
+          >
+            Bahan-Bahan
+          </Text>
+
+          <Text
+            style={[
+              styles.sectionSubtitle,
+              {
+                color: isDark ? '#AAAAAA' : '#666666',
+              },
+            ]}
+          >
             Ketuk bahan untuk menandai yang sudah Anda siapkan:
           </Text>
           
-          <View style={styles.ingredientsCard}>
+            <View
+              style={[
+                styles.ingredientsCard,
+                {
+                  backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                  borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                },
+              ]}
+            >
             {recipe.ingredients.map((item, index) => {
               const isChecked = !!checkedIngredients[item.name];
               return (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.ingredientRow}
-                  onPress={() => toggleIngredient(item.name)}
-                >
+                    <TouchableOpacity
+                      key={index}
+                      style={[
+                        styles.ingredientRow,
+                        {
+                          borderBottomColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                        },
+                      ]}
+                      onPress={() => toggleIngredient(item.name)}
+                    >
                   <MaterialIcons
                     name={isChecked ? "check-box" : "check-box-outline-blank"}
                     size={22}
@@ -189,31 +315,96 @@ export default function RecipeDetailScreen() {
                   <Text
                     style={[
                       styles.ingredientText,
+                      {
+                        color: isDark ? '#FFFFFF' : '#121212',
+                      },
                       isChecked && styles.ingredientTextChecked,
                     ]}
                   >
+
                     {item.name}
                   </Text>
-                  <Text style={styles.ingredientMeasure}>{item.measure}</Text>
+                  <Text
+                    style={[
+                      styles.ingredientMeasure,
+                      {
+                        color: isDark ? '#FF6B6B' : '#D9534F',
+                      },
+                    ]}
+                  >
+                    {item.measure}
+                  </Text>
                 </TouchableOpacity>
               );
             })}
           </View>
 
-          {/* Instructions Section */}
-          <Text style={styles.sectionTitle}>Instruksi Memasak</Text>
-          <View style={styles.instructionsCard}>
-            <Text style={styles.instructionsText}>
-              {recipe.strInstructions.replace(/\r\n/g, '\n\n')}
-            </Text>
-          </View>
+              {/* Instructions Section */}
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  {
+                    color: isDark ? '#FFFFFF' : '#121212',
+                  },
+                ]}
+              >
+                Instruksi Memasak
+              </Text>
 
-          {recipe.strTags && (
-            <View style={styles.tagWrapper}>
-              <Text style={styles.tagTitle}>Tags: </Text>
-              <Text style={styles.tagContent}>{recipe.strTags.split(',').join(', ')}</Text>
-            </View>
-          )}
+              <View
+                style={[
+                  styles.instructionsCard,
+                  {
+                    backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                    borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.instructionsText,
+                    {
+                      color: isDark ? '#FFFFFF' : '#121212',
+                    },
+                  ]}
+                >
+                  {recipe.strInstructions.replace(/\r\n/g, '\n\n')}
+                </Text>
+              </View>
+
+                {recipe.strTags && (
+                  <View
+                    style={[
+                      styles.tagWrapper,
+                      {
+                        backgroundColor: isDark ? '#1E1E1E' : '#FFFFFF',
+                        borderColor: isDark ? '#2D2D2D' : '#E5E5E5',
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.tagTitle,
+                        {
+                          color: '#FF6B6B',
+                        },
+                      ]}
+                    >
+                    Tags:
+                  </Text>
+
+                  <Text
+                    style={[
+                      styles.tagContent,
+                      {
+                        color: isDark ? '#AAAAAA' : '#666666',
+                      },
+                    ]}
+                  >
+                    {recipe.strTags.split(',').join(', ')}
+                  </Text>
+                </View>
+              )}
         </View>
       </ScrollView>
     </SafeAreaView>
