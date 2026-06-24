@@ -11,8 +11,8 @@ Sesuai dengan ketentuan **Skenario B (Tim Berisi 2 Orang)**, berikut adalah deta
 
 | Peran | Anggota Tim | Deskripsi Tugas & Tanggung Jawab |
 | :--- | :--- | :--- |
-| **Anggota 1: Frontend & Axios Specialist** | **[NAMA ANGGOTA 1]** | - Merancang seluruh tata letak (UI/UX) aplikasi dan navigasi antar halaman.<br>- Menangani pengambilan data dari API eksternal menggunakan Axios.<br>- Mengerjakan dan mendemonstrasikan **Fitur 1 (Dashboard & Search)** & **Fitur 2 (Recipe Detail & Checklist)**. |
-| **Anggota 2: Backend, State & Firebase Specialist** | **[NAMA ANGGOTA 2]** | - Melakukan setup dan konfigurasi SDK Firebase.<br>- Mengelola session Auth dan sinkronisasi database Cloud Firestore.<br>- Mengelola state local aplikasi (loading, error handling, checklist resep).<br>- Mengerjakan dan mendemonstrasikan **Fitur 3 (Firebase Auth & Real-time Cookbook)**. |
+| **Anggota 1: Frontend & Axios Specialist** | **[M. Fachrul Reza]** | - Merancang seluruh tata letak (UI/UX) aplikasi dan navigasi antar halaman.<br>- Menangani pengambilan data dari API eksternal menggunakan Axios.<br>- Mengerjakan dan mendemonstrasikan **Fitur 1 (Dashboard & Search)** & **Fitur 2 (Recipe Detail & Checklist)**. |
+| **Anggota 2: Backend, State & Firebase Specialist** | **[Agus Tri Sucipto]** | - Melakukan setup dan konfigurasi SDK Firebase.<br>- Mengelola session Auth dan sinkronisasi database Cloud Firestore.<br>- Mengelola state local aplikasi (loading, error handling, checklist resep).<br>- Mengerjakan dan mendemonstrasikan **Fitur 3 (Firebase Auth & Real-time Cookbook)**. |
 
 ---
 
